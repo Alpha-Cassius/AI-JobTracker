@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Tracking and Optimization System</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Eel Bridge -->
+    <script type="text/javascript" src="/eel.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-inter antialiased h-screen flex overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 border-r border-gray-700 flex flex-col shadow-2xl z-10">
+        <div class="p-6 border-b border-gray-700">
+            <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
+                <i class="fa-solid fa-rocket mr-2 text-blue-400"></i>JobTracker
+            </h1>
+        </div>
+        <nav class="flex-1 p-4 space-y-2">
+            <button onclick="navigate('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center p-3 rounded-lg bg-blue-600/20 text-blue-400 transition-colors">
+                <i class="fa-solid fa-chart-pie w-6"></i> Dashboard
+            </button>
+            <button onclick="navigate('jobs')" id="nav-jobs" class="nav-btn w-full flex items-center p-3 rounded-lg hover:bg-gray-700 text-gray-400 transition-colors">
+                <i class="fa-solid fa-briefcase w-6"></i> Job Tracker
+            </button>
+            <button onclick="navigate('optimizer')" id="nav-optimizer" class="nav-btn w-full flex items-center p-3 rounded-lg hover:bg-gray-700 text-gray-400 transition-colors">
+                <i class="fa-solid fa-wand-magic-sparkles w-6"></i> Optimizer
+            </button>
+            <button onclick="navigate('builder')" id="nav-builder" class="nav-btn w-full flex items-center p-3 rounded-lg hover:bg-gray-700 text-gray-400 transition-colors">
+                <i class="fa-solid fa-file-invoice w-6"></i> Resume Builder
+            </button>
+        </nav>
+        <div class="p-4 border-t border-gray-700 text-sm text-gray-500 text-center">
+            v1.0.0
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto bg-gray-900 relative">
+        <!-- Dashboard View -->
+        <div id="view-dashboard" class="view-section p-8">
+            <h2 class="text-3xl font-bold mb-8 text-white">Dashboard Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="stat-card bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-lg">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-gray-400 font-medium">Total Applied</h3>
+                        <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </div>
+                    </div>
+                    <p id="stat-total" class="text-3xl font-bold text-white">0</p>
+                </div>
+                <div class="stat-card bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-lg">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-gray-400 font-medium">Interviews</h3>
+                        <div class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-400">
+                            <i class="fa-solid fa-comments"></i>
+                        </div>
+                    </div>
+                    <p id="stat-interviews" class="text-3xl font-bold text-white">0</p>
+                </div>
+                <div class="stat-card bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-lg">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-gray-400 font-medium">Offers</h3>
+                        <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                    </div>
+                    <p id="stat-offers" class="text-3xl font-bold text-white">0</p>
+                </div>
+                <div class="stat-card bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-lg">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-gray-400 font-medium">Rejections</h3>
+                        <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-400">
+                            <i class="fa-solid fa-xmark"></i>
+                        </div>
+                    </div>
+                    <p id="stat-rejections" class="text-3xl font-bold text-white">0</p>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 rounded-2xl border border-gray-700 shadow-lg p-6">
+                <h3 class="text-xl font-semibold mb-4">Recent Applications</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-gray-700 text-gray-400">
+                                <th class="pb-3 font-medium">Company</th>
+                                <th class="pb-3 font-medium">Role</th>
+                                <th class="pb-3 font-medium">Date</th>
+                                <th class="pb-3 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-jobs-list">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jobs Tracker View -->
+        <div id="view-jobs" class="view-section p-8 hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-white">Job Tracker</h2>
+                <button onclick="openJobModal()" class="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-lg font-medium transition-all shadow-lg shadow-blue-500/30 flex items-center">
+                    <i class="fa-solid fa-plus mr-2"></i> Add Job
+                </button>
+            </div>
+            
+            <div class="bg-gray-800 rounded-2xl border border-gray-700 shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-800/50">
+                            <tr class="border-b border-gray-700 text-gray-400">
+                                <th class="p-4 font-medium">Company</th>
+                                <th class="p-4 font-medium">Role</th>
+                                <th class="p-4 font-medium">Date Applied</th>
+                                <th class="p-4 font-medium">Status</th>
+                                <th class="p-4 font-medium">Salary</th>
+                                <th class="p-4 font-medium text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-jobs-list" class="divide-y divide-gray-700">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Optimizer View -->
+        <div id="view-optimizer" class="view-section p-8 hidden">
+            <h2 class="text-3xl font-bold mb-2 text-white">Application Optimizer</h2>
+            <p class="text-gray-400 mb-8">Compare your resume against the job description to identify missing keywords.</p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-lg flex flex-col">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-200"><i class="fa-solid fa-file-lines mr-2"></i>Job Description</h3>
+                    <textarea id="opt-job-desc" class="flex-1 w-full min-h-[300px] bg-gray-900 border border-gray-700 rounded-lg p-4 text-gray-300 focus:outline-none focus:border-blue-500 transition-colors resize-none" placeholder="Paste the job description here..."></textarea>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-lg flex flex-col">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-200"><i class="fa-regular fa-file-word mr-2"></i>Your Resume</h3>
+                    <textarea id="opt-resume" class="flex-1 w-full min-h-[300px] bg-gray-900 border border-gray-700 rounded-lg p-4 text-gray-300 focus:outline-none focus:border-blue-500 transition-colors resize-none" placeholder="Paste your resume text here..."></textarea>
+                </div>
+            </div>
+            
+            <div class="flex justify-center mb-8">
+                <button onclick="runOptimizer()" class="px-8 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-full font-bold text-lg transition-all shadow-lg shadow-purple-500/30 flex items-center">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Analyze Match
+                </button>
+            </div>
+            
+            <div id="opt-results" class="bg-gray-800 p-8 rounded-2xl border border-gray-700 shadow-lg hidden">
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <!-- Left: Match Score and Keywords -->
+                    <div class="flex flex-col items-center gap-6 lg:w-1/3">
+                        <div class="flex flex-col items-center justify-center relative w-48 h-48">
+                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                <path class="text-gray-700" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path id="match-donut" class="text-green-500" stroke-dasharray="0, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            </svg>
+                            <div class="absolute flex flex-col items-center justify-center text-center">
+                                <span id="match-score" class="text-5xl font-bold text-white">0%</span>
+                                <span class="text-sm text-gray-400 mt-1 uppercase tracking-widest font-semibold">Match</span>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full">
+                            <h3 class="text-lg font-semibold mb-3 text-white"><i class="fa-solid fa-key mr-2 text-yellow-400"></i>Missing Keywords</h3>
+                            <div id="missing-keywords" class="flex flex-wrap gap-2">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Suggestions and Cover Letter -->
+                    <div class="flex-1 flex flex-col gap-6">
+                        <div class="bg-gray-900/50 p-6 rounded-xl border border-gray-700">
+                            <h3 class="text-lg font-semibold mb-3 text-white"><i class="fa-solid fa-lightbulb mr-2 text-yellow-400"></i>AI Suggestions</h3>
+                            <ul id="ai-suggestions" class="list-disc pl-5 space-y-2 text-gray-300">
+                                <!-- Populated by JS -->
+                            </ul>
+                        </div>
+
+                        <div class="bg-gray-900/50 p-6 rounded-xl border border-gray-700">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-white"><i class="fa-solid fa-envelope-open-text mr-2 text-blue-400"></i>Tailored Cover Letter</h3>
+                                <button onclick="generateCoverLetter()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-lg transition-colors flex items-center shadow-md">
+                                    <i class="fa-solid fa-pen-nib mr-2"></i> Draft Letter
+                                </button>
+                            </div>
+                            <div id="cover-letter-container" class="hidden">
+                                <textarea id="generated-cover-letter" class="w-full h-64 bg-gray-800 border border-gray-600 rounded-lg p-4 text-gray-200 focus:outline-none focus:border-blue-500 transition-colors resize-y text-sm leading-relaxed mb-3"></textarea>
+                                <button onclick="copyCoverLetter()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors flex items-center">
+                                    <i class="fa-solid fa-copy mr-2"></i> Copy to Clipboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resume Builder View -->
+        <div id="view-builder" class="view-section p-8 hidden">
+            <h2 class="text-3xl font-bold mb-2 text-white">AI Resume Builder</h2>
+            <p class="text-gray-400 mb-8">Paste your raw LinkedIn profile text (or notes) to generate a polished, professional resume.</p>
+            
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                <!-- Left: Input -->
+                <div class="flex flex-col gap-6">
+                    <div class="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-lg flex flex-col flex-1">
+                        <h3 class="text-lg font-semibold mb-2 text-gray-200"><i class="fa-brands fa-linkedin mr-2 text-blue-500"></i>Raw Profile Text</h3>
+                        <p class="text-xs text-gray-400 mb-4">Export your LinkedIn to PDF, copy the text, and paste it here.</p>
+                        <textarea id="builder-input" class="flex-1 w-full min-h-[300px] bg-gray-900 border border-gray-700 rounded-lg p-4 text-gray-300 focus:outline-none focus:border-blue-500 transition-colors resize-y text-sm" placeholder="Paste raw text here..."></textarea>
+                        
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Target Role (Optional)</label>
+                            <input type="text" id="builder-target-role" placeholder="e.g. Senior Software Engineer" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        
+                        <button onclick="buildResume()" class="mt-6 w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg font-bold transition-all shadow-lg shadow-blue-500/30 flex justify-center items-center">
+                            <i class="fa-solid fa-gears mr-2"></i> Generate Professional Resume
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Right: Preview -->
+                <div class="flex flex-col">
+                    <div class="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-lg flex flex-col h-full min-h-[600px]">
+                        <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-4">
+                            <h3 class="text-lg font-semibold text-gray-200"><i class="fa-solid fa-file-pdf mr-2 text-red-400"></i>Generated Preview</h3>
+                            <button onclick="copyResume()" id="copy-resume-btn" class="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-xs rounded-lg transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fa-solid fa-copy mr-1"></i> Copy Markdown
+                            </button>
+                        </div>
+                        
+                        <div id="resume-preview" class="flex-1 overflow-y-auto bg-gray-900 rounded-lg border border-gray-700 p-6 prose prose-invert prose-sm max-w-none text-gray-300">
+                            <div class="h-full flex flex-col items-center justify-center text-gray-500 text-center">
+                                <i class="fa-solid fa-file-lines text-4xl mb-3 opacity-50"></i>
+                                <p>Your generated resume will appear here.</p>
+                            </div>
+                        </div>
+                        <textarea id="raw-resume-markdown" class="hidden"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Job Modal -->
+    <div id="job-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 flex items-center justify-center opacity-0 transition-opacity">
+        <div class="bg-gray-800 w-full max-w-2xl rounded-2xl border border-gray-700 shadow-2xl transform scale-95 transition-transform" id="job-modal-content">
+            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white" id="modal-title">Add New Job</h3>
+                <button onclick="closeJobModal()" class="text-gray-400 hover:text-white transition-colors">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <form id="job-form">
+                    <input type="hidden" id="job-id">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Company *</label>
+                            <input type="text" id="job-company" required class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Role *</label>
+                            <input type="text" id="job-role" required class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Date Applied</label>
+                            <input type="date" id="job-date" class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" style="color-scheme: dark;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Status</label>
+                            <select id="job-status" class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500">
+                                <option value="Applied">Applied</option>
+                                <option value="Screening">Screening</option>
+                                <option value="Interview">Interview</option>
+                                <option value="Offer">Offer</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Salary / Compensation</label>
+                            <input type="text" id="job-salary" placeholder="e.g. $100k - $120k" class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Job Description Link / Notes</label>
+                            <textarea id="job-notes" rows="3" class="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 resize-none"></textarea>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button type="button" onclick="closeJobModal()" class="px-5 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors font-medium">Cancel</button>
+                        <button type="submit" class="px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg transition-colors shadow-lg font-medium">Save Job</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
